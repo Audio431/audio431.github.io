@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include head.html %}
+
+  <body>
+
+    <div class="site-wrapper">
+
+      <aside class="sidebar">
+        <div class="sidebar-inner">
+          <h1 class="sidebar-title">
+            <a href="{{ '/' | prepend: site.baseurl }}">{{ site.title }}</a>
+          </h1>
+          <p class="sidebar-description">{{ site.description }}</p>
+
+          <nav class="sidebar-nav">
+            <a href="{{ '/' | prepend: site.baseurl }}">Home</a>
+            {% for my_page in site.pages %}
+              {% if my_page.title and my_page.title != "Home" %}
+              <a href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
+              {% endif %}
+            {% endfor %}
+          </nav>
+
+          <div class="sidebar-links">
+            {% if site.github_username %}
+            <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">GitHub</a>
+            {% endif %}
+            {% if site.email %}
+            <a href="mailto:{{ site.email }}">Email</a>
+            {% endif %}
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <article>
+          {% if page.title %}
+          <h1 class="page-title">{{ page.title }}</h1>
+          {% endif %}
+          {{ content }}
+        </article>
+      </main>
+
+    </div>
+
+  </body>
+
+</html>

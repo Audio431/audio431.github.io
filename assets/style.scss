@@ -1,0 +1,269 @@
+---
+---
+@charset "utf-8";
+@import "theme-{{ site.theme_color | default: 'black' }}.scss";
+
+// ── Font & Theme Tokens ─────────────────────────────────────────────
+
+$font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$color-text-primary: #000;
+$ease-fade: cubic-bezier(0.4, 0, 0.2, 1);
+
+body {
+  font-family: $font-sans;
+  color: $color-text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+// ── Sidebar + Main Layout ───────────────────────────────────────────
+
+.site-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+// ── Sidebar ─────────────────────────────────────────────────────────
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: $color-background;
+  color: $color-foreground;
+  padding: 2.5rem 1.5rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+
+  a {
+    color: $color-title;
+    text-decoration: none;
+    transition: opacity 0.3s $ease-fade;
+
+    &:hover {
+      text-decoration: none;
+      opacity: 0.8;
+    }
+  }
+}
+
+.sidebar-description {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  opacity: 0.75;
+  margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+
+  a {
+    color: $color-foreground;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s $ease-fade;
+
+    &:hover {
+      border-bottom-color: $color-dot-accent;
+      text-decoration: none;
+    }
+  }
+}
+
+.sidebar-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  a {
+    color: $color-foreground;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    text-decoration: none;
+    transition: opacity 0.3s $ease-fade;
+
+    &:hover {
+      opacity: 1;
+      text-decoration: none;
+    }
+  }
+}
+
+// ── Main Content ────────────────────────────────────────────────────
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 3rem 3rem 4rem;
+  max-width: 860px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.post-date {
+  color: $color-text-accent;
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+// ── Section Headings ────────────────────────────────────────────────
+
+.section-heading {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.25rem;
+  color: $color-text-primary;
+  opacity: 0.4;
+}
+
+// ── Card Grid ───────────────────────────────────────────────────────
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: border-color 0.3s $ease-fade, box-shadow 0.3s $ease-fade;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    border-color: $color-text-accent;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5rem;
+
+  a {
+    color: $color-text-primary;
+    text-decoration: none;
+    transition: color 0.3s $ease-fade;
+
+    &:hover {
+      color: $color-text-accent;
+      text-decoration: none;
+    }
+  }
+}
+
+.card-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: $color-body-text;
+  opacity: 0.75;
+  flex: 1;
+  margin-bottom: 0.75rem;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.card-tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba($color-text-accent, 0.08);
+  color: $color-text-accent;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.card-date {
+  font-size: 0.8rem;
+  color: $color-text-accent;
+  margin-bottom: 0.35rem;
+}
+
+// ── Blog List ───────────────────────────────────────────────────────
+
+.blog-card .card-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ── Empty State ─────────────────────────────────────────────────────
+
+.empty-state {
+  font-size: 0.9rem;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+// ── Mobile ──────────────────────────────────────────────────────────
+
+@media (max-width: 52em) {
+  .site-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 1.5rem;
+  }
+
+  .sidebar-inner {
+    height: auto;
+  }
+
+  .sidebar-links {
+    margin-top: 1.5rem;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .main-content {
+    padding: 2rem 1.5rem;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}

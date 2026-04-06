@@ -1,0 +1,23 @@
+- name: Full-Path Emissions Cost Model
+  description: >-
+    End-to-end telemetry pipeline for measuring the carbon cost of web browsing.
+    Combines a Firefox extension with a backend estimation server to map system-level
+    metrics to emission estimates. University of Glasgow dissertation project.
+  url: https://github.com/Audio431/fullpath-emissions-cost-model
+  tags: [typescript, telemetry, sustainability, research]
+
+- name: Raft Visualiser
+  description: >-
+    A specification-compliant implementation of the Raft consensus algorithm with
+    real-time visualisation. Built alongside MIT 6.5840 (Distributed Systems), with
+    full OpenTelemetry instrumentation across both the Go backend and React frontend.
+  url: https://github.com/Audio431/raft-visualiser
+  tags: [go, react, raft, opentelemetry, distributed-systems]
+
+- name: Multi-Agent Automated Coding
+  description: >-
+    A framework for running multiple AI coding agents in parallel on a shared codebase
+    without conflicts. Uses a mutex-protected dependency state tree to coordinate
+    real-time task decomposition across worker threads.
+  url: https://github.com/Audio431/claudes-multi-agent-automated-coding
+  tags: [typescript, ai-agents, concurrency]
