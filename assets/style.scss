@@ -3,21 +3,69 @@
 @charset "utf-8";
 @import "theme-{{ site.theme_color | default: 'black' }}.scss";
 
-// ── Font & Theme Tokens ─────────────────────────────────────────────
+// ── Swiss Design Tokens ─────────────────────────────────────────────
 
-$font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$color-text-primary: #000;
-$ease-fade: cubic-bezier(0.4, 0, 0.2, 1);
+$swiss-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$swiss-black: #181818;
+$swiss-red: #E74727;
+$swiss-white: #fff;
+$swiss-gray: #888;
+$swiss-border: #ddd;
+$swiss-border-dark: #181818;
+
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+// ── Reset Overrides ─────────────────────────────────────────────────
 
 body {
-  font-family: $font-sans;
-  color: $color-text-primary;
+  font-family: $swiss-font;
+  font-size: 16px;
+  color: $swiss-black;
+  background: $swiss-white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
 }
 
-// ── Sidebar + Main Layout ───────────────────────────────────────────
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: $swiss-red;
+  color: $swiss-white;
+}
+
+// ── Keyframes ───────────────────────────────────────────────────────
+
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes enter-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes rule-expand {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.6); opacity: 0.4; }
+}
+
+@keyframes type-cursor {
+  0%, 100% { border-color: $swiss-red; }
+  50%      { border-color: transparent; }
+}
+
+// ── Layout ──────────────────────────────────────────────────────────
 
 .site-wrapper {
   display: flex;
@@ -27,11 +75,11 @@ body {
 // ── Sidebar ─────────────────────────────────────────────────────────
 
 .sidebar {
-  width: 280px;
+  width: 300px;
   flex-shrink: 0;
-  background: $color-background;
-  color: $color-foreground;
-  padding: 2.5rem 1.5rem;
+  background: $swiss-black;
+  color: $swiss-white;
+  padding: 2.5rem 2rem;
   position: sticky;
   top: 0;
   height: 100vh;
@@ -45,49 +93,92 @@ body {
 }
 
 .sidebar-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin: 0 0 1rem;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 0;
+  animation: enter-left 0.6s $ease both;
 
   a {
-    color: $color-title;
-    text-decoration: none;
-    transition: opacity 0.3s $ease-fade;
-
-    &:hover {
-      text-decoration: none;
-      opacity: 0.8;
-    }
+    color: $swiss-white;
+    transition: color 0.3s $ease;
+    &:hover { color: $swiss-red; text-decoration: none; }
   }
+}
+
+// Thick red rule -- classic Swiss divider
+.sidebar-rule {
+  height: 3px;
+  background: $swiss-red;
+  margin: 1.25rem 0;
+  transform-origin: left;
+  animation: rule-expand 0.8s $ease-out 0.2s both;
 }
 
 .sidebar-description {
   font-size: 0.85rem;
-  line-height: 1.5;
-  opacity: 0.75;
-  margin-bottom: 2rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2.5rem;
+  animation: enter-left 0.5s $ease 0.3s both;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $swiss-red;
+  margin-right: 4px;
+  vertical-align: middle;
+  animation: dot-pulse 2.5s ease-in-out infinite;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0;
   margin-bottom: 2rem;
 
   a {
-    color: $color-foreground;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 0.25rem 0;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s $ease-fade;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0.6rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s $ease;
+
+    // Red slide-in bar on hover
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: $swiss-red;
+      transform: translateX(-3px);
+      transition: transform 0.3s $ease;
+    }
 
     &:hover {
-      border-bottom-color: $color-dot-accent;
+      color: $swiss-white;
+      padding-left: 12px;
       text-decoration: none;
+
+      &::before { transform: translateX(0); }
+    }
+  }
+
+  // Stagger
+  @for $i from 1 through 5 {
+    a:nth-child(#{$i}) {
+      animation: enter-left 0.4s $ease #{0.3 + $i * 0.06}s both;
     }
   }
 }
@@ -96,20 +187,26 @@ body {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  animation: enter-left 0.5s $ease 0.6s both;
 
   a {
-    color: $color-foreground;
-    font-size: 0.85rem;
-    opacity: 0.6;
-    text-decoration: none;
-    transition: opacity 0.3s $ease-fade;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.3s $ease;
 
-    &:hover {
-      opacity: 1;
-      text-decoration: none;
-    }
+    &:hover { color: $swiss-red; text-decoration: none; }
   }
+}
+
+.sidebar-dot {
+  width: 8px;
+  height: 8px;
+  background: $swiss-red;
+  border-radius: 50%;
+  margin-bottom: 0.75rem;
 }
 
 // ── Main Content ────────────────────────────────────────────────────
@@ -117,20 +214,25 @@ body {
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 3rem 3rem 4rem;
-  max-width: 860px;
+  padding: 3rem 3.5rem 4rem;
+  max-width: 920px;
 }
 
 .page-title {
-  font-size: 2rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 2rem;
+  animation: enter-up 0.5s $ease both;
 }
 
 .post-date {
-  color: $color-text-accent;
   font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $swiss-red;
   display: block;
   margin-bottom: 1.5rem;
 }
@@ -138,13 +240,28 @@ body {
 // ── Section Headings ────────────────────────────────────────────────
 
 .section-heading {
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 1.25rem;
-  color: $color-text-primary;
-  opacity: 0.4;
+  letter-spacing: 0.14em;
+  color: $swiss-gray;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid $swiss-black;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+
+  // Red square accent
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: $swiss-red;
+    flex-shrink: 0;
+    animation: dot-pulse 3s ease-in-out infinite;
+  }
 }
 
 // ── Card Grid ───────────────────────────────────────────────────────
@@ -153,72 +270,107 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
-  margin-bottom: 3rem;
-}
+  margin-bottom: 3.5rem;
 
-.card {
-  border: 1px solid $color-border;
-  border-radius: 8px;
-  padding: 1.25rem;
-  transition: border-color 0.3s $ease-fade, box-shadow 0.3s $ease-fade;
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    border-color: $color-text-accent;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
-}
-
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0 0 0.5rem;
-
-  a {
-    color: $color-text-primary;
-    text-decoration: none;
-    transition: color 0.3s $ease-fade;
-
-    &:hover {
-      color: $color-text-accent;
-      text-decoration: none;
+  // Staggered entrance
+  .card {
+    @for $i from 1 through 8 {
+      &:nth-child(#{$i}) {
+        animation: enter-up 0.45s $ease #{0.1 + $i * 0.08}s both;
+      }
     }
   }
 }
 
+// ── Cards ───────────────────────────────────────────────────────────
+
+.card {
+  border: 2px solid $swiss-border;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: $swiss-white;
+  transition: transform 0.35s $ease, border-color 0.3s $ease, box-shadow 0.35s $ease;
+  will-change: transform;
+
+  // Red top accent -- hidden by default, slides in on hover
+  &::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    height: 3px;
+    background: $swiss-red;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s $ease;
+  }
+
+  &:hover {
+    border-color: $swiss-black;
+    box-shadow: 6px 6px 0 $swiss-black;
+
+    &::after { transform: scaleX(1); }
+  }
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+
+  a {
+    color: $swiss-black;
+    transition: color 0.25s $ease;
+
+    &:hover { color: $swiss-red; text-decoration: none; }
+  }
+}
+
 .card-description {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: $color-body-text;
-  opacity: 0.75;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: $swiss-gray;
   flex: 1;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .card-tag {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-  background: rgba($color-text-accent, 0.08);
-  color: $color-text-accent;
-  border-radius: 3px;
-  font-weight: 500;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid $swiss-border;
+  transition: all 0.25s $ease;
+
+  &:hover {
+    background: $swiss-black;
+    color: $swiss-white;
+    border-color: $swiss-black;
+  }
 }
 
 .card-date {
-  font-size: 0.8rem;
-  color: $color-text-accent;
-  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $swiss-red;
+  margin-bottom: 0.4rem;
 }
 
-// ── Blog List ───────────────────────────────────────────────────────
+// ── Blog Cards ──────────────────────────────────────────────────────
 
 .blog-card .card-description {
   display: -webkit-box;
@@ -231,8 +383,31 @@ body {
 
 .empty-state {
   font-size: 0.9rem;
-  opacity: 0.5;
+  color: $swiss-gray;
   font-style: italic;
+  animation: enter-up 0.5s $ease 0.3s both;
+}
+
+// ── Scroll Reveal ───────────────────────────────────────────────────
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s $ease, transform 0.6s $ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Scrollbar ───────────────────────────────────────────────────────
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: $swiss-border;
+  &:hover { background: $swiss-gray; }
 }
 
 // ── Mobile ──────────────────────────────────────────────────────────
@@ -249,21 +424,35 @@ body {
     padding: 1.5rem;
   }
 
-  .sidebar-inner {
-    height: auto;
-  }
+  .sidebar-inner { height: auto; }
+
+  .sidebar-title { font-size: 1.3rem; }
 
   .sidebar-links {
     margin-top: 1.5rem;
     flex-direction: row;
-    gap: 1rem;
+    gap: 1.25rem;
   }
 
+  .sidebar-dot { display: none; }
+
   .main-content {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.25rem;
   }
+
+  .page-title { font-size: 2rem; }
 
   .card-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// ── Reduced Motion ──────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
