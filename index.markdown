@@ -1,6 +1,5 @@
 ---
-layout: home
-title: Home
+layout: default
 ---
 
 <h2 class="section-heading">Projects</h2>
