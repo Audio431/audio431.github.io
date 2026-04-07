@@ -157,7 +157,16 @@
           }
         }
         sizeCanvas();
-        window.addEventListener('resize', function () { sizeCanvas(); setupHighlights(); });
+        var resizeTimer;
+        var lastW = W, lastH = H;
+        window.addEventListener('resize', function () {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function () {
+            var prevW = W, prevH = H;
+            sizeCanvas();
+            if (W !== prevW || H !== prevH) setupHighlights();
+          }, 200);
+        });
 
         function set(x, y, c) {
           x = Math.floor(x); y = Math.floor(y);
