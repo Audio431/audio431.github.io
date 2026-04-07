@@ -8,7 +8,7 @@
     <div class="site-wrapper">
 
       <aside class="sidebar">
-        <canvas id="graph-bg" width="80" height="240"></canvas>
+        <canvas id="graph-bg"></canvas>
         <div class="sidebar-inner">
           <h1 class="sidebar-title">
             <a href="{{ '/' | prepend: site.baseurl }}">{{ site.title }}</a>
@@ -83,14 +83,62 @@
         var canvas = document.getElementById('graph-bg');
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
-        var W = 80, H = 240;
-        var img = ctx.createImageData(W, H);
+        var W, H, img;
         var t = 0;
 
         var bg    = [24, 24, 24];
         var dim   = [60, 60, 55];
         var hi    = [232, 200, 64];
         var gridC = [35, 35, 32];
+
+        // All nodes in 0-1 normalized space, well-spaced
+        var allNodes = [
+          { x: 0.25, y: 0.02, w: 22, h: 10, label: 8 },
+          { x: 0.65, y: 0.14, w: 18, h: 8,  label: 6 },
+          { x: 0.08, y: 0.28, w: 20, h: 10, label: 7 },
+          { x: 0.55, y: 0.42, w: 24, h: 10, label: 9 },
+          { x: 0.15, y: 0.56, w: 16, h: 8,  label: 5 },
+          { x: 0.60, y: 0.70, w: 20, h: 10, label: 6 },
+          { x: 0.10, y: 0.84, w: 22, h: 8,  label: 8 },
+          { x: 0.55, y: 0.95, w: 16, h: 8,  label: 4 }
+        ];
+
+        // Mobile: separate layout optimized for wide/short canvas
+        var mobileNodes = [
+          { x: 0.05, y: 0.15, w: 20, h: 8, label: 6 },
+          { x: 0.30, y: 0.55, w: 22, h: 8, label: 8 },
+          { x: 0.55, y: 0.10, w: 18, h: 8, label: 5 },
+          { x: 0.75, y: 0.60, w: 20, h: 8, label: 7 },
+          { x: 0.92, y: 0.20, w: 16, h: 8, label: 4 }
+        ];
+
+        var isMobile = false;
+        var baseNodes, activeEdges;
+
+        function sizeCanvas() {
+          var sidebar = canvas.parentElement;
+          var scale = 0.25;
+          W = Math.round(sidebar.offsetWidth * scale);
+          H = Math.round(sidebar.offsetHeight * scale);
+          canvas.width = W;
+          canvas.height = H;
+          img = ctx.createImageData(W, H);
+
+          var wasMobile = isMobile;
+          isMobile = W > H;
+
+          if (isMobile) {
+            baseNodes = mobileNodes;
+            activeEdges = [[0,1],[1,3],[2,3],[2,4],[0,2]];
+          } else {
+            baseNodes = allNodes;
+            activeEdges = [
+              [0,1],[0,2],[1,3],[2,3],[2,4],[3,5],[4,5],[4,6],[5,7],[6,7]
+            ];
+          }
+        }
+        sizeCanvas();
+        window.addEventListener('resize', function () { sizeCanvas(); setupHighlights(); });
 
         function set(x, y, c) {
           x = Math.floor(x); y = Math.floor(y);
@@ -114,52 +162,56 @@
 
         function hash(n) { var x = Math.sin(n)*43758.5453; return x - Math.floor(x); }
 
-        var nodes = [
-          { x: 25, y: 15,  w: 22, h: 10, label: 8 },
-          { x: 50, y: 35,  w: 18, h: 8,  label: 6 },
-          { x: 5,  y: 65,  w: 20, h: 10, label: 7 },
-          { x: 35, y: 85,  w: 24, h: 10, label: 9 },
-          { x: 55, y: 110, w: 16, h: 8,  label: 5 },
-          { x: 10, y: 140, w: 20, h: 10, label: 6 },
-          { x: 40, y: 160, w: 22, h: 8,  label: 8 },
-          { x: 55, y: 190, w: 16, h: 8,  label: 4 },
-          { x: 5,  y: 40,  w: 18, h: 10, label: 5 },
-          { x: 30, y: 215, w: 20, h: 10, label: 6 },
-          { x: 48, y: 5,   w: 18, h: 8,  label: 5 }
-        ];
-
         // Rotate highlighted nodes one at a time, staggered
         var hiSet = {};
-        var hiSlots = [null, null, null];
-        function pickRandom() {
-          var r;
-          do { r = Math.floor(Math.random() * nodes.length); }
-          while (hiSlots.indexOf(r) !== -1);
-          return r;
+        var hiSlots = [];
+        var hiTimers = [];
+        function setupHighlights() {
+          hiSlots.forEach(function (s) { if (s !== null) delete hiSet[s]; });
+          hiTimers.forEach(function (id) { clearInterval(id); });
+          hiSet = {};
+          var count = isMobile ? 1 : 3;
+          hiSlots = [];
+          for (var i = 0; i < count; i++) hiSlots.push(null);
+          function pickRandom() {
+            var r;
+            do { r = Math.floor(Math.random() * baseNodes.length); }
+            while (hiSlots.indexOf(r) !== -1);
+            return r;
+          }
+          function rotateSlot(slot) {
+            if (hiSlots[slot] !== null) delete hiSet[hiSlots[slot]];
+            var next = pickRandom();
+            hiSlots[slot] = next;
+            hiSet[next] = true;
+          }
+          for (var i = 0; i < count; i++) rotateSlot(i);
+          var intervals = [5000, 7000, 9000];
+          hiTimers = [];
+          for (var i = 0; i < count; i++) {
+            hiTimers.push(setInterval((function (s) { return function () { rotateSlot(s); }; })(i), intervals[i]));
+          }
         }
-        function rotateSlot(slot) {
-          if (hiSlots[slot] !== null) delete hiSet[hiSlots[slot]];
-          var next = pickRandom();
-          hiSlots[slot] = next;
-          hiSet[next] = true;
-        }
-        rotateSlot(0); rotateSlot(1); rotateSlot(2);
-        setInterval(function () { rotateSlot(0); }, 5000);
-        setInterval(function () { rotateSlot(1); }, 7000);
-        setInterval(function () { rotateSlot(2); }, 9000);
-
-        var edges = [
-          [0,1],[0,3],[1,4],[2,3],[2,5],[3,4],[3,6],[5,6],[6,7],[4,7],
-          [8,0],[8,2],[1,10],[9,7]
-        ];
+        setupHighlights();
 
         function render() {
           clear();
 
-          for (var y = 0; y < H; y += 20) hline(0, W-1, y, gridC);
-          for (var x = 0; x < W; x += 20) for (var y = 0; y < H; y++) set(x, y, gridC);
+          var gridStep = 20;
+          for (var y = 0; y < H; y += gridStep) hline(0, W-1, y, gridC);
+          for (var x = 0; x < W; x += gridStep) for (var y = 0; y < H; y++) set(x, y, gridC);
 
           var drift = t * 0.008;
+          var margin = 5;
+
+          // Scale nodes from normalized coords to current canvas size
+          var nodes = baseNodes.map(function (n, i) {
+            return {
+              x: margin + n.x * (W - n.w - margin * 2),
+              y: margin + n.y * (H - n.h - margin * 2),
+              w: n.w, h: n.h, label: n.label
+            };
+          });
 
           var moved = nodes.map(function (n, i) {
             return {
@@ -169,7 +221,7 @@
             };
           });
 
-          edges.forEach(function (e) {
+          activeEdges.forEach(function (e) {
             var na = moved[e[0]], nb = moved[e[1]];
             var ax = na.x + na.w/2, ay = na.y + na.h/2;
             var bx = nb.x + nb.w/2, by = nb.y + nb.h/2;

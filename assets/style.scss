@@ -16,7 +16,12 @@ $swiss-border-dark: #181818;
 $ease: cubic-bezier(0.4, 0, 0.2, 1);
 $ease-out: cubic-bezier(0, 0, 0.2, 1);
 
-// ── Reset Overrides ─────────────────────────────────────────────────
+// ── Reset Overrides ─────────────────────────────────────────────
+
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
 
 body {
   font-family: $swiss-font;
@@ -433,37 +438,59 @@ a {
 @media (max-width: 52em) {
   .site-wrapper {
     flex-direction: column;
+    height: auto;
+    overflow: visible;
   }
 
   .sidebar {
     width: 100%;
-    height: auto;
+    height: 220px;
     position: relative;
-    padding: 1.5rem;
+    padding: 0;
+    overflow: hidden;
   }
 
-  .sidebar-inner { height: auto; }
+  .sidebar-inner {
+    height: 100%;
+    padding: 1.5rem;
+    overflow: hidden;
+  }
 
   .sidebar-title { font-size: 1.3rem; }
 
+  .sidebar-description { margin-bottom: 1rem; }
+
+  .sidebar-rule { margin: 0.75rem 0; }
+
+  .sidebar-nav { display: none; }
+
   .sidebar-links {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     flex-direction: row;
     gap: 1.25rem;
   }
 
   .sidebar-dot { display: none; }
 
-  #graph-bg { display: none; }
+  #graph-bg { opacity: 0.2; }
 
   .main-content {
+    margin-left: 0;
+    height: auto;
+    overflow-y: visible;
     padding: 2rem 1.25rem;
+    max-width: 100%;
   }
 
   .page-title { font-size: 2rem; }
 
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .card:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 
