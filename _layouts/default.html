@@ -85,6 +85,25 @@
         var ctx = canvas.getContext('2d');
         var W, H, img;
         var t = 0;
+        var animating = false;
+        var canvasVisible = true;
+        var tabVisible = true;
+
+        function shouldAnimate() { return canvasVisible && tabVisible; }
+
+        function startLoop() {
+          if (!animating && shouldAnimate()) { animating = true; requestAnimationFrame(render); }
+        }
+
+        new IntersectionObserver(function(entries) {
+          canvasVisible = entries[0].isIntersecting;
+          if (shouldAnimate()) startLoop();
+        }, { threshold: 0 }).observe(canvas);
+
+        document.addEventListener('visibilitychange', function() {
+          tabVisible = !document.hidden;
+          if (shouldAnimate()) startLoop();
+        });
 
         var bg    = [24, 24, 24];
         var dim   = [60, 60, 55];
@@ -257,10 +276,14 @@
 
           ctx.putImageData(img, 0, 0);
           t++;
-          requestAnimationFrame(render);
+          if (shouldAnimate()) {
+            requestAnimationFrame(render);
+          } else {
+            animating = false;
+          }
         }
 
-        render();
+        startLoop();
       });
     </script>
 
